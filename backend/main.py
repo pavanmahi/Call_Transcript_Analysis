@@ -141,8 +141,10 @@ async def download_csv():
         if not analysis_results:
             raise HTTPException(status_code=404, detail="No analysis results available")
         
+        # Directly create DataFrame from results
         df = pd.DataFrame(analysis_results)
-        df.columns = ['Transcript', 'Summary', 'Sentiment']  # Rename columns
+        df = df[['transcript', 'summary', 'sentiment']]  # Ensure column order
+        df.columns = ['Transcript', 'Summary', 'Sentiment']
         
         # Create temporary CSV file
         temp_file = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.csv')
@@ -155,7 +157,7 @@ async def download_csv():
             filename="call_analysis.csv",
             media_type="text/csv"
         )
-        
+
     except HTTPException:
         raise
     except Exception as e:
